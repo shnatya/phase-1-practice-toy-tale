@@ -1,3 +1,4 @@
+//second virsion of grabbing a <p> element on the card using p_id
 let addToy = false;
 base_url = "http://localhost:3000/toys";
 
@@ -43,30 +44,31 @@ function getToys() {
     .then(res => res.json())
     .then(toysArray => toysArray.forEach(toy => renderToyCard(toy)))
 }
-//Create a new toy card and render it to the DOM
+//Create a new toy card and render it to DOM
 function renderToyCard(toy) {
     let toyCard = document.createElement('li');
     const toyCollectionDiv = document.querySelector("#toy-collection")
     toyCard.className = "card";
+    let p_id = "t_" + toy.id; // assigning id to each <p> so we can grab it or use button.previousElementSibling
     toyCard.innerHTML = `
       <h2>${toy.name}</h2>
       <img src = ${toy.image} class = "toy-avatar">
-      <p>${toy.likes}</p>
+      <p id = ${p_id}>${toy.likes}</p>
       <button class="like-btn" id=${toy.id}>Like</button>
     `
     toyCollectionDiv.appendChild(toyCard);
     
-    handleLikeButton(toy); //Listen for a click on "like" button
+    handleLikeButton(toy,p_id); //Listen for a click on "like" button
 }
 //"Like" button listens for an event and if it pressed, then likes increase by 1.
-function handleLikeButton(toy) {
+function handleLikeButton(toy,p_id) {
   const button = document.getElementById(`${toy.id}`)
-  let likesVar = button.previousElementSibling; //grab <p> that is previous the button with current id 
   button.addEventListener("click", (event) => {
     event.preventDefault(); 
     toy.likes ++;
-    likesVar.textContent = `${toy.likes}`; // Likes are rendering to the DOM
-    saveLikesAPI(toy); //the number of likes should be updated in the database
+    likesVar = document.querySelector(`#${p_id}`)
+    likesVar.textContent = `${toy.likes}`;
+    saveLikesAPI(toy);
   })
 }
 function saveLikesAPI(toy) {
@@ -81,4 +83,4 @@ function saveLikesAPI(toy) {
   .then(data => console.log(data))
   .catch(error => console.log(error.message))
 }
-//fetch(`http://localhost:3000/toys/${e.target.id}
+//${e.target.id}
